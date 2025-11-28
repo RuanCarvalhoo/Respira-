@@ -1,5 +1,5 @@
 """
-Tests for User Profile Module
+Testes para o Módulo de Perfil de Usuário
 """
 
 import unittest
@@ -10,18 +10,18 @@ from respira_plus.user_profile import UserProfile
 class TestUserProfile(unittest.TestCase):
     
     def setUp(self):
-        """Set up test user profile."""
+        """Configura o perfil de usuário de teste."""
         self.user = UserProfile("test001", "Test User")
     
     def test_user_creation(self):
-        """Test user profile creation."""
+        """Testa a criação do perfil de usuário."""
         self.assertEqual(self.user.user_id, "test001")
         self.assertEqual(self.user.name, "Test User")
         self.assertEqual(self.user.total_points, 0)
         self.assertEqual(len(self.user.emissions_history), 0)
     
     def test_add_emission_record(self):
-        """Test adding emission records."""
+        """Testa a adição de registros de emissão."""
         date = datetime.now().isoformat()
         breakdown = {'transportation': 10.0, 'energy': 5.0, 'food': 3.0}
         
@@ -31,7 +31,7 @@ class TestUserProfile(unittest.TestCase):
         self.assertEqual(self.user.emissions_history[0]['total_emissions_kg'], 18.0)
     
     def test_start_mission(self):
-        """Test starting a mission."""
+        """Testa o início de uma missão."""
         mission = {
             'id': 1,
             'title': 'Test Mission',
@@ -47,7 +47,7 @@ class TestUserProfile(unittest.TestCase):
         self.assertEqual(self.user.active_missions[0]['status'], 'active')
     
     def test_complete_mission(self):
-        """Test completing a mission."""
+        """Testa a conclusão de uma missão."""
         mission = {
             'id': 1,
             'title': 'Test Mission',
@@ -65,12 +65,12 @@ class TestUserProfile(unittest.TestCase):
         self.assertEqual(self.user.total_points, 100)
     
     def test_complete_nonexistent_mission(self):
-        """Test completing a mission that doesn't exist."""
+        """Testa a conclusão de uma missão que não existe."""
         result = self.user.complete_mission(999)
         self.assertFalse(result)
     
     def test_get_total_emissions(self):
-        """Test calculating total emissions."""
+        """Testa o cálculo do total de emissões."""
         date = datetime.now().isoformat()
         breakdown = {'transportation': 10.0, 'energy': 5.0, 'food': 3.0}
         
@@ -81,7 +81,7 @@ class TestUserProfile(unittest.TestCase):
         self.assertEqual(total, 40.0)
     
     def test_get_total_co2_saved(self):
-        """Test calculating total CO2 saved."""
+        """Testa o cálculo do total de CO2 economizado."""
         mission1 = {
             'id': 1,
             'title': 'Mission 1',
@@ -106,7 +106,7 @@ class TestUserProfile(unittest.TestCase):
         self.assertEqual(total_saved, 50.0)
     
     def test_get_statistics(self):
-        """Test getting user statistics."""
+        """Testa a obtenção das estatísticas do usuário."""
         date = datetime.now().isoformat()
         breakdown = {'transportation': 10.0, 'energy': 5.0, 'food': 3.0}
         
@@ -132,7 +132,7 @@ class TestUserProfile(unittest.TestCase):
         self.assertEqual(stats['missions_completed'], 1)
     
     def test_to_dict(self):
-        """Test converting profile to dictionary."""
+        """Testa a conversão do perfil para dicionário."""
         data = self.user.to_dict()
         
         self.assertIsInstance(data, dict)
@@ -142,7 +142,7 @@ class TestUserProfile(unittest.TestCase):
         self.assertIn('emissions_history', data)
     
     def test_from_dict(self):
-        """Test creating profile from dictionary."""
+        """Testa a criação do perfil a partir de um dicionário."""
         data = {
             'user_id': 'test002',
             'name': 'Test User 2',
