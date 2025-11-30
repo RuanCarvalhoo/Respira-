@@ -3,7 +3,7 @@ import axios from 'axios';
 // Use localhost for web, or specific IP for device if needed. 
 // For Android Emulator use 'http://10.0.2.2:8000'
 // For iOS Simulator use 'http://localhost:8000'
-const API_URL = 'http://localhost:8000'; 
+const API_URL = 'http://192.168.1.101:8000'; 
 
 const api = axios.create({
   baseURL: API_URL,
@@ -44,16 +44,16 @@ export const calculatorApi = {
 };
 
 export const authApi = {
-  login: async (email: string, password: string): Promise<{ access_token: string }> => {
-    const response = await api.post<{ access_token: string }>('/api/auth/login', {
+  login: async (email: string, password: string): Promise<{ access_token: string; name?: string }> => {
+    const response = await api.post<{ access_token: string; name?: string }>('/api/auth/login', {
       email,
       password,
     });
     return response.data;
   },
 
-  register: async (name: string, email: string, password: string): Promise<{ access_token: string }> => {
-    const response = await api.post<{ access_token: string }>('/api/auth/register', {
+  register: async (name: string, email: string, password: string): Promise<{ access_token: string; name?: string }> => {
+    const response = await api.post<{ access_token: string; name?: string }>('/api/auth/register', {
       name,
       email,
       password,

@@ -1,14 +1,12 @@
 import { create } from 'zustand';
+import { Mission } from '../constants/missions';
 
 interface UserState {
   transportEmission: number;
   energyEmission: number;
   foodEmission: number;
   totalPoints: number;
-  activeMission: {
-    title: string;
-    progress: number;
-  } | null;
+  activeMission: (Mission & { progress: number }) | null;
   ownedItems: string[];
   equippedItems: {
     accessory: string | null;
@@ -18,6 +16,9 @@ interface UserState {
   addPoints: (amount: number) => void;
   buyItem: (itemId: string, price: number) => boolean;
   equipItem: (itemId: string, type: 'accessory' | 'bg') => void;
+  name: string | null;
+  setName: (name: string) => void;
+  acceptMission: (mission: Mission) => void;
 }
 
 export const useUserStore = create<UserState>((set, get) => ({
@@ -25,15 +26,13 @@ export const useUserStore = create<UserState>((set, get) => ({
   energyEmission: 0,
   foodEmission: 0,
   totalPoints: 1250,
-  activeMission: {
-    title: "Segunda sem Carne",
-    progress: 0.75,
-  },
+  activeMission: null,
   ownedItems: ['bg_default'],
   equippedItems: {
     accessory: null,
     bg: 'bg_default',
   },
+  name: null,
   addEmission: (category, amount) => set((state) => {
     const key = `${category}Emission` as keyof UserState;
     return { ...state, [key]: (state[key] as number) + amount };
@@ -57,4 +56,8 @@ export const useUserStore = create<UserState>((set, get) => ({
       [type]: itemId === state.equippedItems[type] ? null : itemId, // Toggle if same (optional, but good for accessories)
     }
   })),
+  setName: (name) => set({ name }),
+  acceptMission: (mission) => set({
+    activeMission: { ...mission, progress: 0 }
+  }),
 }));

@@ -9,7 +9,7 @@ import { ITEMS_DB } from '../constants/items';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export const HomeScreen = ({ navigation }: any) => {
-  const { transportEmission, energyEmission, activeMission, equippedItems } = useUserStore();
+  const { transportEmission, energyEmission, activeMission, equippedItems, name } = useUserStore();
   const [showBubble, setShowBubble] = useState(false);
 
   const triggerSpeech = () => {
@@ -25,7 +25,7 @@ export const HomeScreen = ({ navigation }: any) => {
         {/* Header */}
         <View className="flex-row justify-between items-center mb-6">
           <View>
-            <Text className="text-2xl text-teal-800 font-bold font-fredoka">Olá, Usuário! 👋</Text>
+            <Text className="text-2xl text-teal-800 font-bold font-fredoka">Olá, {name || 'Usuário'}! 👋</Text>
             <Text className="text-sm text-gray-500 font-semibold font-nunito">Vamos salvar o planeta hoje?</Text>
           </View>
           <View className="w-10 h-10 rounded-full bg-teal-200 border-2 border-white shadow-md overflow-hidden">

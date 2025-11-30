@@ -36,79 +36,51 @@ Calcula emissões de CO2 baseadas em:
 - Missões completadas e ativas
 - Impacto líquido (emissões vs. economia)
 
-## 📦 Instalação
+## 📦 Instalação e Execução
 
 ### Pré-requisitos
-- Python 3.7 ou superior
+- Node.js (v18+)
+- Python (v3.8+)
+- Expo Go (no celular) ou Android Studio/Xcode (simulador)
 
-### Passos
+### 1. Backend (API)
 
-1. Clone o repositório:
+O backend é construído com FastAPI.
+
 ```bash
-git clone https://github.com/MarceloDChagas/Respira-.git
-cd Respira-
-```
+# Entre na pasta do backend
+cd backend
 
-2. (Opcional) Crie um ambiente virtual:
-```bash
+# (Opcional) Crie e ative um ambiente virtual
 python -m venv venv
-source venv/bin/activate  # No Windows: venv\Scripts\activate
-```
+# Windows:
+.\venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
 
-3. Instale as dependências:
-```bash
+# Instale as dependências
 pip install -r requirements.txt
+
+# Inicie o servidor
+uvicorn app.main:app --reload
 ```
+O servidor rodará em `http://localhost:8000`.
 
-## 🎯 Como Usar
+### 2. Frontend (App Mobile)
 
-### Executar a Demonstração
+O frontend é construído com React Native e Expo.
 
-Execute o aplicativo de demonstração:
 ```bash
-python main.py
+# Entre na pasta do frontend
+cd frontend
+
+# Instale as dependências
+npm install
+
+# Inicie o projeto
+npx expo start
 ```
-
-Isso irá:
-- Criar um usuário de demonstração
-- Calcular uma pegada de carbono semanal
-- Mostrar dicas sustentáveis
-- Listar missões disponíveis
-- Iniciar uma missão
-- Exibir estatísticas do usuário
-
-### Usar como Biblioteca
-
-```python
-from respira_plus.carbon_calculator import CarbonCalculator
-from respira_plus.tips_missions import TipsMissionsManager
-from respira_plus.user_profile import UserProfile
-
-# Criar calculadora
-calculator = CarbonCalculator()
-
-# Calcular emissões de transporte (100 km de carro a gasolina)
-emissions = calculator.calculate_transportation('car_gasoline_km', 100)
-print(f"Emissões: {emissions:.2f} kg CO2e")
-
-# Obter dicas sustentáveis
-tips_manager = TipsMissionsManager()
-tips = tips_manager.get_random_tips(3)
-for tip in tips:
-    print(f"{tip['title']}: {tip['description']}")
-
-# Criar perfil de usuário
-user = UserProfile("user001", "João Silva")
-user.add_emission_record("2025-01-01", 50.0, {
-    'transportation': 30.0,
-    'energy': 15.0,
-    'food': 5.0
-})
-
-# Ver estatísticas
-stats = user.get_statistics()
-print(f"Total de emissões: {stats['total_emissions_kg']:.2f} kg CO2e")
-```
+Escaneie o QR Code com o app Expo Go ou pressione `a` para abrir no emulador Android.
 
 ## 🧪 Testes
 

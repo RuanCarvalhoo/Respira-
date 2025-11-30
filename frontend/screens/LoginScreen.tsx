@@ -4,12 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlassCard } from '../components/GlassCard';
 import { FontAwesome5 } from '@expo/vector-icons';
 
+import { useUserStore } from '../store/userStore';
 import { authApi } from '../services/api';
 
 export const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const setName = useUserStore((state) => state.setName);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -19,7 +21,10 @@ export const LoginScreen = ({ navigation }: any) => {
 
     setLoading(true);
     try {
-      await authApi.login(email, password);
+      const response = await authApi.login(email, password);
+      if (response.name) {
+        setName(response.name);
+      }
       // In a real app, we would store the token here
       navigation.replace('Main');
     } catch (error) {

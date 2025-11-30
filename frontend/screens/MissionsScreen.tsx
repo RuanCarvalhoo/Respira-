@@ -1,12 +1,30 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { GlassCard } from '../components/GlassCard';
 import { useUserStore } from '../store/userStore';
+import { MISSIONS } from '../constants/missions';
 
-export const MissionsScreen = () => {
-  const { totalPoints } = useUserStore();
+export const MissionsScreen = ({ navigation }: any) => {
+  const { totalPoints, activeMission, acceptMission } = useUserStore();
+
+  const handleAcceptMission = (mission: typeof MISSIONS[0]) => {
+    if (activeMission) {
+      Alert.alert(
+        "Missão em andamento",
+        "Você já tem uma missão ativa. Termine-a antes de iniciar outra!"
+      );
+      return;
+    }
+    
+    acceptMission(mission);
+    Alert.alert(
+      "Missão Aceita! 🚀",
+      `Você iniciou a missão: ${mission.title}. Boa sorte!`,
+      [{ text: "OK", onPress: () => navigation.navigate('Home') }]
+    );
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-bg-app px-6 pt-4">
@@ -17,50 +35,70 @@ export const MissionsScreen = () => {
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} className="space-y-4">
-        {/* Mission 1 */}
-        <GlassCard className="p-4 overflow-hidden relative">
-          <View className="absolute top-0 right-0 bg-green-100 px-2 py-1 rounded-bl-lg">
-            <Text className="text-green-600 text-[10px] font-bold">FÁCIL</Text>
-          </View>
-          <View className="flex-row gap-4">
-            <View className="w-12 h-12 rounded-2xl bg-teal-100 items-center justify-center">
-              <FontAwesome5 name="bicycle" size={20} color="#319795" />
-            </View>
-            <View className="flex-1">
-              <Text className="font-bold text-gray-800 font-fredoka text-lg">Dia sem Carro</Text>
-              <Text className="text-xs text-gray-500 mb-3 font-nunito">Vá de bike ou transporte público.</Text>
-              <View className="flex-row justify-between items-center">
-                <Text className="text-xs font-bold text-teal-600">+100 pts</Text>
-                <TouchableOpacity className="bg-teal-500 px-3 py-1.5 rounded-lg shadow-sm">
-                  <Text className="text-white text-xs font-bold">Aceitar</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </GlassCard>
+      <ScrollView showsVerticalScrollIndicator={false} className="space-y-4 pb-10">
+        {MISSIONS.map((mission) => {
+          const isLocked = false; // Future logic for locking hard missions
+          const isActive = activeMission?.id === mission.id;
+          
+          // Color mapping
+          let bgBadge = 'bg-green-100';
+          let textBadge = 'text-green-600';
+          let iconColor = '#319795'; // teal-500
+          let iconBg = 'bg-teal-100';
 
-        {/* Mission 2 */}
-        <GlassCard className="p-4 overflow-hidden relative opacity-80">
-          <View className="absolute top-0 right-0 bg-orange-100 px-2 py-1 rounded-bl-lg">
-            <Text className="text-orange-600 text-[10px] font-bold">MÉDIO</Text>
-          </View>
-          <View className="flex-row gap-4">
-            <View className="w-12 h-12 rounded-2xl bg-orange-100 items-center justify-center">
-              <FontAwesome5 name="hamburger" size={20} color="#dd6b20" />
-            </View>
-            <View className="flex-1">
-              <Text className="font-bold text-gray-800 font-fredoka text-lg">Refeição Vegana</Text>
-              <Text className="text-xs text-gray-500 mb-3 font-nunito">Experimente um almoço sem carne.</Text>
-              <View className="flex-row justify-between items-center">
-                <Text className="text-xs font-bold text-teal-600">+150 pts</Text>
-                <View className="bg-gray-200 px-3 py-1.5 rounded-lg">
-                  <Text className="text-gray-500 text-xs font-bold">Bloqueado</Text>
+          if (mission.difficulty === 'MÉDIO') {
+            bgBadge = 'bg-orange-100';
+            textBadge = 'text-orange-600';
+            iconColor = '#dd6b20'; // orange-500
+            iconBg = 'bg-orange-100';
+          } else if (mission.difficulty === 'DIFÍCIL') {
+            bgBadge = 'bg-red-100';
+            textBadge = 'text-red-600';
+            iconColor = '#e53e3e'; // red-500
+            iconBg = 'bg-red-100';
+          }
+
+          return (
+            <GlassCard key={mission.id} className={`p-4 overflow-hidden relative mb-4 ${isActive ? 'border-2 border-teal-500' : ''}`}>
+              <View className={`absolute top-0 right-0 ${bgBadge} px-2 py-1 rounded-bl-lg`}>
+                <Text className={`${textBadge} text-[10px] font-bold`}>{mission.difficulty}</Text>
+              </View>
+              
+              <View className="flex-row gap-4">
+                <View className={`w-12 h-12 rounded-2xl ${iconBg} items-center justify-center`}>
+                  <FontAwesome5 name={mission.icon as any} size={20} color={iconColor} />
+                </View>
+                
+                <View className="flex-1">
+                  <Text className="font-bold text-gray-800 font-fredoka text-lg">{mission.title}</Text>
+                  <Text className="text-xs text-gray-500 mb-3 font-nunito">{mission.description}</Text>
+                  
+                  {mission.duration && (
+                     <Text className="text-[10px] text-gray-400 font-bold mb-2">⏱ {mission.duration}</Text>
+                  )}
+
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-xs font-bold text-teal-600">+{mission.points} pts</Text>
+                    
+                    {isActive ? (
+                       <View className="bg-teal-100 px-3 py-1.5 rounded-lg">
+                        <Text className="text-teal-600 text-xs font-bold">Em Andamento</Text>
+                      </View>
+                    ) : (
+                      <TouchableOpacity 
+                        onPress={() => handleAcceptMission(mission)}
+                        className="bg-teal-500 px-3 py-1.5 rounded-lg shadow-sm active:scale-95"
+                      >
+                        <Text className="text-white text-xs font-bold">Aceitar</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
               </View>
-            </View>
-          </View>
-        </GlassCard>
+            </GlassCard>
+          );
+        })}
+        <View className="h-10" /> 
       </ScrollView>
     </SafeAreaView>
   );

@@ -26,6 +26,7 @@ class UserRegister(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    name: Optional[str] = None
 
 # Mock Database
 users_db = {}
@@ -62,7 +63,7 @@ def register(user: UserRegister):
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "name": user.name}
 
 @router.post("/login", response_model=Token)
 def login(user: UserLogin):
@@ -78,4 +79,4 @@ def login(user: UserLogin):
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "name": db_user.get("name")}

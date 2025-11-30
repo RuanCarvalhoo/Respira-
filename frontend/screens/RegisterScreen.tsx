@@ -4,14 +4,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlassCard } from '../components/GlassCard';
 import { FontAwesome5 } from '@expo/vector-icons';
 
+import { useUserStore } from '../store/userStore';
 import { authApi } from '../services/api';
 
 export const RegisterScreen = ({ navigation }: any) => {
-  const [name, setName] = useState('');
+  const [name, setNameInput] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const setName = useUserStore((state) => state.setName);
 
   const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -26,7 +28,12 @@ export const RegisterScreen = ({ navigation }: any) => {
 
     setLoading(true);
     try {
-      await authApi.register(name, email, password);
+      const response = await authApi.register(name, email, password);
+      if (response.name) {
+        setName(response.name);
+      } else {
+        setName(name); // Fallback to local state if backend doesn't return it
+      }
       // In a real app, we would store the token here
       navigation.replace('Main');
     } catch (error) {
@@ -59,7 +66,7 @@ export const RegisterScreen = ({ navigation }: any) => {
                 className="bg-white/80 border border-gray-200 rounded-xl p-4 font-nunito text-gray-800 focus:border-teal-500"
                 placeholder="Seu Nome"
                 value={name}
-                onChangeText={setName}
+                onChangeText={setNameInput}
               />
             </View>
 
